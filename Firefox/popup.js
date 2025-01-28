@@ -39,13 +39,13 @@ document.getElementById("send").addEventListener("click", async () => {
   
     // Envoyez les données au serveur
     const { url, html } = result[0].result;
-    // await fetch("https://votre-serveur.com/api", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify({ url, html })
-    // });
+    await fetch("http://localhost:8080/api/articles", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ url, html })
+    });
 
     console.log("Les données ont été envoyées avec succès !");
     console.log("url: ", url);
