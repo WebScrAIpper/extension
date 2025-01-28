@@ -33,24 +33,17 @@ document.getElementById('saveButton').addEventListener('click', async () => {
     };
 
     const content = document.body.outerHTML;
-    console.log('metadata:', metadata);
-    console.log('content:', content);
   
-    fetch('https://your-api-endpoint.com/save', {
+    fetch('http://localhost:8080/api/articles', {
       method: 'POST',
+      mode: 'no-cors',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ metadata, content }),
     })
     .then(response => {
-      if (response.ok) {
-        chrome.runtime.sendMessage({ action: 'endLoading' });
-        alert('Page saved successfully!');
-      } else {
-        chrome.runtime.sendMessage({ action: 'endLoading' });
-        alert('Failed to save the page.');
-      }
+      alert('Page saved successfully!'); //
     })
     .catch(error => {
       console.error('Error saving the page:', error);
