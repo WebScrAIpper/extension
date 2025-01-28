@@ -11,7 +11,7 @@ function showNotification(title, message) {
   }
 }
 
-document.getElementById("send").addEventListener("click", async () => {
+document.getElementById("saveButton").addEventListener("click", async () => {
     // Obtenez l'onglet actif
     console.log("Bouton cliqué !");
 

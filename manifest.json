@@ -3,11 +3,8 @@
   "name": "techSwarmPost",
   "version": "1.0",
   "description": "Cette extension permet d'envoyer le lien d'un article vers TechSwarm",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": ["activeTab", "scripting", "storage", "tabs"],
   "host_permissions": ["<all_urls>"],
-  "background": {
-    "service_worker": "background.js"
-  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
