@@ -5,13 +5,14 @@
     "description": "Envoie l'URL de la page actuelle et son contenu HTML brut lorsque vous cliquez sur un bouton bleu.",
     "permissions": [
         "activeTab",
-        "scripting"
+        "scripting",
+        "tabs"
     ],
     "host_permissions": [
         "<all_urls>"
     ],
     "background": {
-        "service_worker": "background.js"
+        "scripts": ["background.js"]
     },
     "action": {
         "default_popup": "popup.html",
