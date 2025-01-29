@@ -4,14 +4,6 @@ const errorText = document.getElementById('errorText');
 const successText = document.getElementById('successText');
 
 async function executeContentScript() {
-  const metadata = {
-    authors: document.querySelector('meta[name="author"]')?.content || '',
-    date: document.querySelector('meta[name="date"]')?.content || '',
-    title: document.title,
-    url: window.location.href,
-    description: document.querySelector('meta[name="description"]')?.content || '',
-  };
-
   const content = document.body.outerHTML;
 
   fetch('http://localhost:8080/api/articles', {
@@ -20,7 +12,7 @@ async function executeContentScript() {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ metadata, content }),
+    body: JSON.stringify({ content }),
   })
     .then(() => chrome.runtime.sendMessage({ action: 'saveSuccess' }))
     .catch(error => chrome.runtime.sendMessage({ action: 'saveError', message: error.message }));

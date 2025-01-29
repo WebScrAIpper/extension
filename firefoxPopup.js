@@ -4,24 +4,14 @@ const errorText = document.getElementById('errorText');
 const successText = document.getElementById('successText');
 
 async function executeContentScript() {
-  const metadata = {
-    authors: document.querySelector('meta[name="author"]')?.content || '',
-    date: document.querySelector('meta[name="date"]')?.content || '',
-    title: document.title,
-    url: window.location.href,
-    description: document.querySelector('meta[name="description"]')?.content || '',
-  };
-
   const content = document.body.outerHTML;
-
-  console.log("la",metadata, content);
   fetch('http://localhost:8080/api/articles', {
     method: 'POST',
     mode: 'no-cors',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ metadata, content }),
+    body: JSON.stringify({ content }),
   })
     .then(() => browser.runtime.sendMessage({ action: 'saveSuccess' }))
     .catch(error => browser.runtime.sendMessage({ action: 'saveError', message: error.message }));
