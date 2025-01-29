@@ -15,7 +15,7 @@ async function executeContentScript() {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Failed to save the page.");
+        throw new Error("Failed to save the page: "+response.statusText);
       } 
       chrome.runtime.sendMessage({ action: "saveSuccess" });
     })

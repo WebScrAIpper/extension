@@ -12,7 +12,12 @@ async function executeContentScript() {
     },
     body: content,
   })
-    .then(() => browser.runtime.sendMessage({ action: "saveSuccess" }))
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to save the page: "+response.statusText);
+      } 
+      browser.runtime.sendMessage({ action: "saveSuccess" });
+    })
     .catch((error) =>
       browser.runtime.sendMessage({
         action: "saveError",
