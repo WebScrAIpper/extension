@@ -1,22 +1,17 @@
 {
-    "manifest_version": 3,
-    "name": "Envoyer URL et HTML",
-    "version": "1.0",
-    "description": "Envoie l'URL de la page actuelle et son contenu HTML brut lorsque vous cliquez sur un bouton bleu.",
-    "permissions": [
-        "activeTab",
-        "scripting"
-    ],
-    "host_permissions": [
-        "<all_urls>"
-    ],
-    "background": {
-        "service_worker": "background.js"
-    },
-    "action": {
-        "default_popup": "popup.html",
-        "default_icon": {
-            "48": "icon.png"
-        }
+  "manifest_version": 3,
+  "name": "techSwarmPost",
+  "version": "1.0",
+  "description": "Cette extension permet d'envoyer le lien d'un article vers TechSwarm",
+  "permissions": ["activeTab", "scripting", "storage", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
     }
+  }
 }
