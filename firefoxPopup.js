@@ -11,7 +11,7 @@ async function executeContentScript() {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ content }),
+    body: content,
   })
     .then(() => browser.runtime.sendMessage({ action: 'saveSuccess' }))
     .catch(error => browser.runtime.sendMessage({ action: 'saveError', message: error.message }));

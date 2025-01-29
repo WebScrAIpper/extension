@@ -12,7 +12,7 @@ async function executeContentScript() {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ content }),
+    body: content,
   })
     .then(() => chrome.runtime.sendMessage({ action: 'saveSuccess' }))
     .catch(error => chrome.runtime.sendMessage({ action: 'saveError', message: error.message }));
