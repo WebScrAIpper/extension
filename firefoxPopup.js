@@ -14,16 +14,23 @@ async function executeContentScript() {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Failed to save the page: "+response.statusText);
-      } 
+        return response.text().then((errorMessage) => {
+          throw new Error("Failed to save the page: " + errorMessage);
+        });
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Success:", data);
       browser.runtime.sendMessage({ action: "saveSuccess" });
     })
-    .catch((error) =>
+    .catch((error) => {
+      console.log(error);
       browser.runtime.sendMessage({
         action: "saveError",
         message: error.message,
-      })
-    );
+      });
+    });
 }
 
 document.getElementById("saveButton").addEventListener("click", async () => {
