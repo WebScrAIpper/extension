@@ -15,16 +15,23 @@ async function executeContentScript() {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Failed to save the page: "+response.statusText);
-      } 
+        return response.text().then((errorMessage) => {
+          throw new Error("Failed to save the page: " + errorMessage);
+        });
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Success:", data);
       chrome.runtime.sendMessage({ action: "saveSuccess" });
     })
-    .catch((error) =>
+    .catch((error) => {
+      console.log(error);
       chrome.runtime.sendMessage({
         action: "saveError",
         message: error.message,
-      })
-    );
+      });
+    });  
 }
 
 document.getElementById("saveButton").addEventListener("click", async () => {
