@@ -5,12 +5,21 @@ const successText = document.getElementById("successText");
 
 async function executeContentScript() {
   const content = document.body.outerHTML;
+  const allElements = document.querySelectorAll("*");
+  const shadowContent = [];
+  allElements.forEach((element) => {
+    if (element.shadowRoot) {
+      shadowContent.push(element.shadowRoot.innerHTML);
+    }
+  });
+  const combinedContent = content + shadowContent.join("");
+
   fetch(`http://localhost:8080/api/build?url=${window.location.href}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: content,
+    body: combinedContent,
   })
     .then((response) => {
       if (!response.ok) {
@@ -21,7 +30,6 @@ async function executeContentScript() {
       return response.json();
     })
     .then((data) => {
-      console.log("Success:", data);
       browser.runtime.sendMessage({ action: "saveSuccess" });
     })
     .catch((error) => {
