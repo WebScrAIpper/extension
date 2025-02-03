@@ -12,13 +12,25 @@ async function executeContentScript() {
     },
     body: content,
   })
-    .then(() => browser.runtime.sendMessage({ action: "saveSuccess" }))
-    .catch((error) =>
+    .then((response) => {
+      if (!response.ok) {
+        return response.text().then((errorMessage) => {
+          throw new Error("Failed to save the page: " + errorMessage);
+        });
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Success:", data);
+      browser.runtime.sendMessage({ action: "saveSuccess" });
+    })
+    .catch((error) => {
+      console.log(error);
       browser.runtime.sendMessage({
         action: "saveError",
         message: error.message,
-      })
-    );
+      });
+    });
 }
 
 document.getElementById("saveButton").addEventListener("click", async () => {
