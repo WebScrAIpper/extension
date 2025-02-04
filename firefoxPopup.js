@@ -3,9 +3,9 @@ const saveButton = document.getElementById("saveButton");
 const errorText = document.getElementById("errorText");
 const successText = document.getElementById("successText");
 
-async function executeContentScript() {
+async function executeContentScript(apiUrl) {
   const content = document.body.outerHTML;
-  fetch(`http://localhost:8080/api/build?url=${window.location.href}`, {
+  fetch(`${apiUrl}/api/build?url=${window.location.href}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -33,6 +33,33 @@ async function executeContentScript() {
     });
 }
 
+document.getElementById("urlChangeButton").addEventListener("click", () => {
+  browser.storage.local.get("apiUrl", (data) => {
+    const apiUrl = data.apiUrl || "http://localhost:8080";
+    document.getElementById("urlInput").value = apiUrl; // Ensure the correct element is targeted
+    document.getElementById("urlInput").classList.remove("hidden"); // Remove 'hidden' from urlInput
+    document.getElementById("urlChangeSave").classList.remove("hidden");
+    document.getElementById("output").innerText = "Current URL: " + apiUrl;
+  });
+});
+
+document.getElementById("urlChangeSave").addEventListener("click", () => {
+  const inputField = document.getElementById("urlInput");
+  const newUrl = inputField.value.trim();
+
+  if (newUrl) {
+    let apiUrl = newUrl.startsWith("http") ? newUrl : "http://" + newUrl;
+    document.getElementById("output").innerText = "Updated URL: " + apiUrl;
+
+    browser.storage.local.set({ apiUrl });
+  } else {
+    browser.runtime.sendMessage({
+      action: "saveError",
+      message: "Please enter a valid URL.",
+    });
+  }
+});
+
 document.getElementById("saveButton").addEventListener("click", async () => {
   loadingIcon.classList.remove("hidden");
   saveButton.disabled = true;
@@ -43,9 +70,15 @@ document.getElementById("saveButton").addEventListener("click", async () => {
     errorText.classList.remove("hidden");
     errorText.textContent = "Cannot save pages from internal Firefox URLs.";
   } else {
-    browser.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: executeContentScript,
+    browser.storage.local.get("apiUrl", (data) => {
+      const storedApiUrl = data.apiUrl || "http://localhost:8080"; // Default fallback
+
+      console.log("Executing content script with API URL:", storedApiUrl);
+      browser.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: executeContentScript,
+        args: [storedApiUrl],
+      });
     });
   }
 });
