@@ -5,12 +5,23 @@ const successText = document.getElementById("successText");
 
 async function executeContentScript(apiUrl) {
   const content = document.body.outerHTML;
+
   fetch(`${apiUrl}/api/build?url=${window.location.href}`, {
+
+  const allElements = document.querySelectorAll("*");
+  const shadowContent = [];
+  allElements.forEach((element) => {
+    if (element.shadowRoot) {
+      shadowContent.push(element.shadowRoot.innerHTML);
+    }
+  });
+  const combinedContent = content + shadowContent.join("");
+
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: content,
+    body: combinedContent,
   })
     .then((response) => {
       if (!response.ok) {
@@ -21,7 +32,6 @@ async function executeContentScript(apiUrl) {
       return response.json();
     })
     .then((data) => {
-      console.log("Success:", data);
       chrome.runtime.sendMessage({ action: "saveSuccess" });
     })
     .catch((error) => {
