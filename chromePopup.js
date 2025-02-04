@@ -3,8 +3,11 @@ const saveButton = document.getElementById("saveButton");
 const errorText = document.getElementById("errorText");
 const successText = document.getElementById("successText");
 
-async function executeContentScript() {
+async function executeContentScript(apiUrl) {
   const content = document.body.outerHTML;
+
+  fetch(`${apiUrl}/api/build?url=${window.location.href}`, {
+
   const allElements = document.querySelectorAll("*");
   const shadowContent = [];
   allElements.forEach((element) => {
@@ -14,7 +17,6 @@ async function executeContentScript() {
   });
   const combinedContent = content + shadowContent.join("");
 
-  fetch(`http://localhost:8080/api/build?url=${window.location.href}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -41,6 +43,33 @@ async function executeContentScript() {
     });
 }
 
+document.getElementById("urlChangeButton").addEventListener("click", () => {
+  chrome.storage.local.get("apiUrl", (data) => {
+    const apiUrl = data.apiUrl || "http://localhost:8080";
+    document.getElementById("urlInput").value = apiUrl; // Ensure the correct element is targeted
+    document.getElementById("urlInput").classList.remove("hidden"); // Remove 'hidden' from urlInput
+    document.getElementById("urlChangeSave").classList.remove("hidden");
+    document.getElementById("output").innerText = "Current URL: " + apiUrl;
+  });
+});
+
+document.getElementById("urlChangeSave").addEventListener("click", () => {
+  const inputField = document.getElementById("urlInput");
+  const newUrl = inputField.value.trim();
+
+  if (newUrl) {
+    let apiUrl = newUrl.startsWith("http") ? newUrl : "http://" + newUrl;
+    document.getElementById("output").innerText = "Updated URL: " + apiUrl;
+
+    chrome.storage.local.set({ apiUrl });
+  } else {
+    chrome.runtime.sendMessage({
+      action: "saveError",
+      message: "Please enter a valid URL.",
+    });
+  }
+});
+
 document.getElementById("saveButton").addEventListener("click", async () => {
   loadingIcon.classList.remove("hidden");
   saveButton.disabled = true;
@@ -51,9 +80,15 @@ document.getElementById("saveButton").addEventListener("click", async () => {
     errorText.classList.remove("hidden");
     errorText.textContent = "Cannot save pages from internal Chrome URLs.";
   } else {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: executeContentScript,
+    chrome.storage.local.get("apiUrl", (data) => {
+      const storedApiUrl = data.apiUrl || "http://localhost:8080"; // Default fallback
+
+      console.log("Executing content script with API URL:", storedApiUrl);
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: executeContentScript,
+        args: [storedApiUrl],
+      });
     });
   }
 });
