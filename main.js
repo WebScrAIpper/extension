@@ -38,6 +38,12 @@ document.getElementById("urlChangeButton").addEventListener("click", () => {
   });
 });
 
+function isYoutube() {
+  return browserImpl.getCurrentUrl().then((url) => {
+    return url.includes("https://www.youtube.com/watch");
+  });
+}
+
 function sendMessage(message) {
   loadingIcon.classList.add("hidden");
   saveButton.disabled = false;
@@ -55,8 +61,7 @@ function sendMessage(message) {
   }
 }
 
-async function getShadowContent() {
-  const pageDocument = await browserImpl.getDocument();
+async function getShadowContent(pageDocument) {
   const allElements = pageDocument.elements;
   const shadowContent = [];
   allElements.forEach((element) => {
@@ -68,16 +73,25 @@ async function getShadowContent() {
 }
 
 async function saveContent(apiUrl) {
-  const pageDocument = await browserImpl.getDocument();
-  const content = pageDocument.html;
-  const combinedContent = content + await getShadowContent();
+  let endpoint = "build";
+  let body = {};
+
+  if(await isYoutube()) {
+    endpoint = "youtubeBuild";
+  }
+  else{
+    const pageDocument = await browserImpl.getDocument();
+    const content = pageDocument.html;
+    body = content + await getShadowContent(pageDocument);
+  }
+  
   const url = await browserImpl.getCurrentUrl();
-  fetch(`${apiUrl}/api/build?url=${url}`, {
+  fetch(`${apiUrl}/api/${endpoint}?url=${url}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: combinedContent,
+    body: body,
   })
     .then((response) => {
       if (!response.ok) {
