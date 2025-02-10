@@ -86,7 +86,7 @@ async function saveContent(apiUrl) {
   }
   
   const url = await browserImpl.getCurrentUrl();
-  fetch(`${apiUrl}/api/${endpoint}?url=${url}`, {
+  fetch(`${apiUrl}/api/${endpoint}?url=${encodeURIComponent(url)}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
