@@ -15,29 +15,6 @@ if (navigator.userAgent.includes("Chrome")) {
   throw new Error("Unsupported browser");
 }
 
-document.getElementById("urlChangeSave").addEventListener("click", () => {
-  const inputField = document.getElementById("urlInput");
-  const newUrl = inputField.value.trim();
-
-  if (newUrl) {
-    let apiUrl = newUrl.startsWith("http") ? newUrl : "http://" + newUrl;
-    document.getElementById("output").innerText = "Updated URL: " + apiUrl;
-    browserImpl.addToStorage({ apiUrl });
-  } else {
-    sendMessage({ action: "saveError", message: "Please enter a valid URL." });
-  }
-});
-
-document.getElementById("urlChangeButton").addEventListener("click", () => {
-  browserImpl.getFromStorage("apiUrl", (data) => {
-    const apiUrl = data.apiUrl || "http://localhost:8080";
-    document.getElementById("urlInput").value = apiUrl;
-    document.getElementById("urlInput").classList.remove("hidden");
-    document.getElementById("urlChangeSave").classList.remove("hidden");
-    document.getElementById("output").innerText = "Current URL: " + apiUrl;
-  });
-});
-
 function isYoutube() {
   return browserImpl.getCurrentUrl().then((url) => {
     return url.includes("https://www.youtube.com/watch");
