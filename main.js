@@ -1,5 +1,44 @@
 import { ChromeImpl } from "./chromeImpl.js";
 import { FirefoxImpl } from "./firefoxImpl.js";
+import Keycloak from "./node_modules/keycloak-js/lib/keycloak.js";
+
+const keycloak = new Keycloak({
+  url: "http://localhost:8000/",
+  realm: "WebScrAIpper",
+  clientId: 'WebScrAIpper-rest-api'
+});
+
+async function checkLogin() {
+  console.log("🚀 Checking Keycloak login status...");
+  
+  try {
+    // "onLoad: check-sso", Tries to check authentication without redirecting
+    // "silentCheckSsoRedirectUri", Uses an iframe with "silent-check-sso.html" to verify login in the background
+    const authenticated = await keycloak.init({
+      onLoad: "check-sso",
+      silentCheckSsoRedirectUri: chrome.runtime.getURL("silent-check-sso.html")
+    });
+    console.log("Keycloak login check completed");
+    
+    if (authenticated) {
+      console.log("✅ User is authenticated:", keycloak.token);
+    } else {
+      console.log("❌ User is not authenticated");
+    }
+
+    return authenticated;
+  } catch (error) {
+    console.error("❗ Error during Keycloak login check:", error);
+  }
+}
+
+checkLogin().then(authenticated => {
+  if (authenticated) {
+    console.log("User is authenticated with Keycloak");
+  } else {
+    console.log("User is not authenticated with Keycloak");
+  }
+});
 
 let browserImpl;
 const loadingIcon = document.getElementById("loadingIcon");
@@ -63,10 +102,12 @@ async function saveContent(apiUrl) {
   }
   
   const url = await browserImpl.getCurrentUrl();
+  const token = keycloak.token;
   fetch(`${apiUrl}/api/${endpoint}?url=${url}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
     },
     body: body,
   })
