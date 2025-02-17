@@ -2,6 +2,12 @@ import { ChromeImpl } from "./chromeImpl.js";
 import { FirefoxImpl } from "./firefoxImpl.js";
 import Keycloak from "./node_modules/keycloak-js/lib/keycloak.js";
 
+let browserImpl;
+const loadingIcon = document.getElementById("loadingIcon");
+const saveButton = document.getElementById("saveButton");
+const errorText = document.getElementById("errorText");
+const successText = document.getElementById("successText");
+
 const keycloak = new Keycloak({
   url: "http://localhost:8000/",
   realm: "WebScrAIpper",
@@ -10,7 +16,7 @@ const keycloak = new Keycloak({
 
 async function checkLogin() {
   console.log("🚀 Checking Keycloak login status...");
-  
+
   try {
     // "onLoad: check-sso", Tries to check authentication without redirecting
     // "silentCheckSsoRedirectUri", Uses an iframe with "silent-check-sso.html" to verify login in the background
@@ -19,7 +25,7 @@ async function checkLogin() {
       silentCheckSsoRedirectUri: chrome.runtime.getURL("silent-check-sso.html")
     });
     console.log("Keycloak login check completed");
-    
+
     if (authenticated) {
       console.log("✅ User is authenticated:", keycloak.token);
     } else {
@@ -32,19 +38,29 @@ async function checkLogin() {
   }
 }
 
-checkLogin().then(authenticated => {
-  if (authenticated) {
-    console.log("User is authenticated with Keycloak");
-  } else {
-    console.log("User is not authenticated with Keycloak");
-  }
-});
+async function getValidToken(keycloak) {
+  try {
+    if (keycloak.token) {
+      const tokenExpiration = keycloak.tokenParsed.exp;
+      const currentTime = Math.floor(Date.now() / 1000);
+      const timeLeft = tokenExpiration - currentTime;
 
-let browserImpl;
-const loadingIcon = document.getElementById("loadingIcon");
-const saveButton = document.getElementById("saveButton");
-const errorText = document.getElementById("errorText");
-const successText = document.getElementById("successText");
+      console.log(`Current token expires in ${timeLeft} seconds.`);
+
+      if (keycloak.isTokenExpired(10)) {
+        console.log("Refreshing token...");
+        await keycloak.updateToken(30);
+        console.log("Token successfully refreshed.");
+      }
+    } else {
+      console.log("No token available.");
+    }
+    return keycloak.token;
+  } catch (error) {
+    console.error("Failed to refresh token:", error);
+    return null;
+  }
+}
 
 if (navigator.userAgent.includes("Chrome")) {
   browserImpl = ChromeImpl;
@@ -70,10 +86,15 @@ function sendMessage(message) {
   } else if (message.action === "saveError") {
     successText.classList.add("hidden");
     errorText.classList.remove("hidden");
-    errorText.textContent = `Error: ${
-      message.message ||
+    errorText.textContent = `Error: ${message.message ||
       "An error occurred while saving the page. Please try again."
-    }`;
+      }`;
+  } else if (message.action === "loginError") {
+    successText.classList.add("hidden");
+    errorText.classList.remove("hidden");
+    errorText.innerHTML = `Error: ${message.message ||
+      "You need to be logged in to save pages. <a href='http://localhost:8000/realms/WebScrAIpper/account' target='_blank'>Log in here</a>."
+      }`;
   }
 }
 
@@ -100,9 +121,17 @@ async function saveContent(apiUrl) {
     const content = pageDocument.html;
     body = content + await getShadowContent(pageDocument);
   }
-  
+
   const url = await browserImpl.getCurrentUrl();
-  const token = keycloak.token;
+  const authenticated = await checkLogin(keycloak);
+  if (!authenticated) {
+    sendMessage({
+      action: "loginError",
+      message: "You need to be logged in to save pages. <a href='http://localhost:8000/realms/WebScrAIpper/account' target='_blank'>Log in here</a>."
+    });
+    return;
+  }
+  const token = await getValidToken(keycloak);
   fetch(`${apiUrl}/api/${endpoint}?url=${url}`, {
     method: "POST",
     headers: {
@@ -128,7 +157,7 @@ async function saveContent(apiUrl) {
 document.getElementById("saveButton").addEventListener("click", async () => {
   loadingIcon.classList.remove("hidden");
   saveButton.disabled = true;
-  
+
   if (await browserImpl.checkForbiddenUrl()) {
     sendMessage({
       action: "saveError",
