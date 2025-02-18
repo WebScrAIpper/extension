@@ -71,12 +71,19 @@ async function saveContent(apiUrl) {
     body: body,
   })
     .then((response) => {
-      if (!response.ok) {
+      if (response.redirected) {
+        const redirectUrl = response.url;
+        successText.classList.add("hidden");
+        errorText.classList.remove("hidden");
+        errorText.innerHTML = `${`You need to be logged in to save pages. <a href='${redirectUrl}' target='_blank'>Log in here</a>.`
+        }`;
+      }else if (!response.ok) {
         return response.text().then((errorMessage) => {
           throw new Error("Failed to save the page: " + errorMessage);
         });
+      }else{
+        sendMessage({ action: "saveSuccess" });
       }
-      sendMessage({ action: "saveSuccess" });
     })
     .catch((error) => {
       console.log(error);
