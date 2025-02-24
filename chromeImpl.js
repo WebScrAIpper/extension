@@ -30,7 +30,10 @@ export const ChromeImpl = {
     });
     return tab.url;
   },
-
+  openUrl: (url) => {
+    console.log("Opening new tab:", url);
+    chrome.tabs.create({ url: url });
+  },
   getDocument: async () => {
     console.log("Getting document");
     const [tab] = await chrome.tabs.query({

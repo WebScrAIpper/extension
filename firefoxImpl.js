@@ -30,7 +30,10 @@ export const FirefoxImpl = {
     });
     return tab.url;
   },
-
+  openUrl: (url) => {
+    console.log("Opening new tab:", url);
+    browser.tabs.create({ url: url });
+  },
   getDocument: async () => {
     console.log("Getting document");
     const [tab] = await browser.tabs.query({

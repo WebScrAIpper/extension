@@ -53,48 +53,48 @@ async function saveContent(apiUrl) {
   let endpoint = "build";
   let body = {};
 
-  if(await isYoutube()) {
+  if (await isYoutube()) {
     endpoint = "youtubeBuild";
-  }
-  else{
+  } else {
     const pageDocument = await browserImpl.getDocument();
     const content = pageDocument.html;
-    body = content + await getShadowContent(pageDocument);
+    body = {
+      content: content + (await getShadowContent(pageDocument)),
+    };
   }
-  
+
   const url = await browserImpl.getCurrentUrl();
-  fetch(`${apiUrl}/api/${endpoint}?url=${url}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: body,
-  })
-    .then((response) => {
-      if (response.redirected) {
-        const redirectUrl = response.url;
-        successText.classList.add("hidden");
-        errorText.classList.remove("hidden");
-        errorText.innerHTML = `${`You need to be logged in to save pages. <a href='${redirectUrl}' target='_blank'>Log in here</a>.`
-        }`;
-      }else if (!response.ok) {
-        return response.text().then((errorMessage) => {
-          throw new Error("Failed to save the page: " + errorMessage);
-        });
-      }else{
-        sendMessage({ action: "saveSuccess" });
+
+  try {
+    const response = await fetch(
+      `${apiUrl}/pre-save-summary?url=${encodeURIComponent(url)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: body,
       }
-    })
-    .catch((error) => {
-      console.log(error);
-      sendMessage({ action: "saveError", message: error.message });
-    });
+    );
+
+    if (response.ok) {
+      const redirectUrl = await response.text();
+      browserImpl.openUrl(redirectUrl);
+    } else {
+      const errorMessage = await response.text();
+      throw new Error("Failed to save the page: " + errorMessage);
+    }
+    sendMessage({ action: "saveSuccess" });
+  } catch (error) {
+    console.error(error);
+    sendMessage({ action: "saveError", message: error.message });
+  }
 }
 
 document.getElementById("saveButton").addEventListener("click", async () => {
   loadingIcon.classList.remove("hidden");
   saveButton.disabled = true;
-  
+
   if (await browserImpl.checkForbiddenUrl()) {
     sendMessage({
       action: "saveError",
