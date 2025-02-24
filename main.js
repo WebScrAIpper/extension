@@ -73,7 +73,7 @@ async function saveContent(apiUrl) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: body,
+        body: JSON.stringify(body),
       }
     );
 
