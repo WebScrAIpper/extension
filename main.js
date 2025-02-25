@@ -53,10 +53,7 @@ async function saveContent(apiUrl) {
   let endpoint = "build";
   let body = {};
 
-  if(await isYoutube()) {
-    endpoint = "youtubeBuild";
-  }
-  else{
+  if(!await isYoutube()) {
     const pageDocument = await browserImpl.getDocument();
     const content = pageDocument.html;
     body = content + await getShadowContent(pageDocument);
