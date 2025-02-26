@@ -67,6 +67,7 @@ async function saveContent(apiUrl) {
     browserImpl.addToStorage({ url: url });
     browserImpl.addToStorage({ body: body });
     browserImpl.openUrl(chrome.runtime.getURL('temporary_page.html'))
+    sendMessage({ action: "saveSuccess" });
   } catch (error) {
     console.error(error);
     sendMessage({ action: "saveError", message: error.message });

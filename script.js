@@ -60,23 +60,32 @@ function createStyle() {
 
 document.addEventListener("DOMContentLoaded", async function () {
   const errorText = createElement("errorText", "error", "An error occurred.");
-  const successText = createElement(
-    "successText",
-    "success",
-    "Page saved successfully!"
-  );
+  const successText = createElement("successText", "success", "Page saved successfully!");
   const loadingIcon = createElement("loadingIcon", "spinner");
-  try {
-    createStyle();
+  const urlDisplay = document.getElementById("urlDisplay");
 
-    // Retrieve URL and Body from storage asynchronously
-    browserImpl.getFromStorage(["url", "body"], async function (data) {
-      const url = data.url;
-      const body = data.body;
+  const displayError = (message) => {
+    loadingIcon.style.display = "none";
+    errorText.textContent = message;
+    errorText.style.display = "block";
+  };
 
-      if (!url || !body) {
-        throw new Error("URL or body not found in storage.");
-      }
+  const handleSavePage = async () => {
+    try {
+      createStyle();
+
+      const data = await new Promise((resolve, reject) => {
+        browserImpl.getFromStorage(["url", "body"], (data) => {
+          if (!data.url || !data.body) {
+            reject("URL or body not found in storage.");
+          } else {
+            resolve(data);
+          }
+        });
+      });
+
+      const { url, body } = data;
+      urlDisplay.textContent = url;
 
       const endpoint = "build";
       const apiUrl = "http://localhost:8080";
@@ -95,8 +104,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
 
       if (!response.ok) {
-        loadingIcon.style.display = "none";
-        errorText.style.display = "block";
+        displayError("Failed to save the page.");
         const errorTextContent = await response.text();
         throw new Error("Failed to save the page: " + errorTextContent);
       }
@@ -106,18 +114,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       loadingIcon.style.display = "none";
       successText.style.display = "block";
 
-      // Display the content in a `pre` element for better readability
       const contentContainer = createElement("content", "content");
-      contentContainer.innerHTML = `<pre>${JSON.stringify(
-        responseData,
-        null,
-        2
-      )}</pre>`;
-    });
-  } catch (error) {
-    // Error handling
-    loadingIcon.style.display = "none";
-    errorText.textContent = error.message;
-    errorText.style.display = "block";
-  }
+      contentContainer.innerHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
+    } catch (error) {
+      displayError(error.message);
+    }
+  };
+
+  await handleSavePage();
 });
