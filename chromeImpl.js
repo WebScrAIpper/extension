@@ -34,6 +34,10 @@ export const ChromeImpl = {
     console.log("Opening new tab:", url);
     chrome.tabs.create({ url: url });
   },
+  getUrl: (path) => {
+    console.log("Getting URL for path:", path);
+    return chrome.runtime.getURL(path);
+  },
   getDocument: async () => {
     console.log("Getting document");
     const [tab] = await chrome.tabs.query({

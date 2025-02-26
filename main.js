@@ -53,9 +53,7 @@ async function saveContent(apiUrl) {
   let endpoint = "build";
   let body = {};
 
-  if (await isYoutube()) {
-    endpoint = "youtubeBuild";
-  } else {
+  if (!await isYoutube()) {
     const pageDocument = await browserImpl.getDocument();
     const content = pageDocument.html;
     body = {
@@ -66,25 +64,9 @@ async function saveContent(apiUrl) {
   const url = await browserImpl.getCurrentUrl();
 
   try {
-    const response = await fetch(
-      `${apiUrl}/pre-save-summary?url=${encodeURIComponent(url)}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
-
-    if (response.ok) {
-      const redirectUrl = await response.text();
-      browserImpl.openUrl(redirectUrl);
-    } else {
-      const errorMessage = await response.text();
-      throw new Error("Failed to save the page: " + errorMessage);
-    }
-    sendMessage({ action: "saveSuccess" });
+    browserImpl.addToStorage({ url: url });
+    browserImpl.addToStorage({ body: body });
+    browserImpl.openUrl(chrome.runtime.getURL('temporary_page.html'))
   } catch (error) {
     console.error(error);
     sendMessage({ action: "saveError", message: error.message });
