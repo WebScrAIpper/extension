@@ -60,7 +60,11 @@ function createStyle() {
 
 document.addEventListener("DOMContentLoaded", async function () {
   const errorText = createElement("errorText", "error", "An error occurred.");
-  const successText = createElement("successText", "success", "Page saved successfully!");
+  const successText = createElement(
+    "successText",
+    "success",
+    "Page saved successfully!"
+  );
   const loadingIcon = createElement("loadingIcon", "spinner");
   const urlDisplay = document.getElementById("urlDisplay");
 
@@ -89,8 +93,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       const endpoint = "build";
       const apiUrl = "http://localhost:8080";
-
-      const response = await fetch(`${apiUrl}/api/${endpoint}?url=${url}`, {
+      
+      let encodedUrl = encodeURIComponent(window.location.href);
+      const response = await fetch(`${apiUrl}/api/${endpoint}?url=${url}&redirect=${encodedUrl}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,15 +103,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         body: JSON.stringify(body),
       });
 
-      if (response.redirected) {
-        window.location.href = response.url;
-        return;
-      }
-
       if (!response.ok) {
         displayError("Failed to save the page.");
         const errorTextContent = await response.text();
         throw new Error("Failed to save the page: " + errorTextContent);
+      }
+      if (response.redirected) {
+        window.location.href = response.url;
+        return;
       }
 
       const responseData = await response.json();
@@ -115,7 +119,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       successText.style.display = "block";
 
       const contentContainer = createElement("content", "content");
-      contentContainer.innerHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
+      contentContainer.innerHTML = `<pre>${JSON.stringify(
+        responseData,
+        null,
+        2
+      )}</pre>`;
     } catch (error) {
       displayError(error.message);
     }

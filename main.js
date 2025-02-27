@@ -49,11 +49,10 @@ async function getShadowContent(pageDocument) {
   return shadowContent.join("");
 }
 
-async function saveContent(apiUrl) {
-  let endpoint = "build";
+async function saveContent() {
   let body = {};
 
-  if (!await isYoutube()) {
+  if (!(await isYoutube())) {
     const pageDocument = await browserImpl.getDocument();
     const content = pageDocument.html;
     body = {
@@ -66,7 +65,7 @@ async function saveContent(apiUrl) {
   try {
     browserImpl.addToStorage({ url: url });
     browserImpl.addToStorage({ body: body });
-    browserImpl.openUrl(chrome.runtime.getURL('temporary_page.html'))
+    browserImpl.openUrl(chrome.runtime.getURL("temporary_page.html"));
     sendMessage({ action: "saveSuccess" });
   } catch (error) {
     console.error(error);
@@ -84,9 +83,6 @@ document.getElementById("saveButton").addEventListener("click", async () => {
       message: "Cannot save pages from internal URLs.",
     });
   } else {
-    await browserImpl.getFromStorage("apiUrl", async (data) => {
-      const storedApiUrl = data.apiUrl || "http://localhost:8080";
-      await saveContent(storedApiUrl);
-    });
+    await saveContent();
   }
 });
