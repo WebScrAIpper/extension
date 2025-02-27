@@ -52,7 +52,7 @@ async function getShadowContent(pageDocument) {
 async function saveContent() {
   let body = {};
 
-  if (!(await isYoutube())) {
+  if(!await isYoutube()) {
     const pageDocument = await browserImpl.getDocument();
     const content = pageDocument.html;
     body = {
@@ -61,7 +61,6 @@ async function saveContent() {
   }
 
   const url = await browserImpl.getCurrentUrl();
-
   try {
     browserImpl.addToStorage({ url: url });
     browserImpl.addToStorage({ body: body });
