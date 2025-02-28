@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Content Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    #url {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .url-container {
+      background-color: #e9ecef;
+      padding: 10px;
+      border-radius: 5px;
+      word-wrap: break-word;
+    }
+    #loadingIcon {
+      display: inline-block;
+    }
+    .error {
+      color: red;
+      display: none;
+    }
+    .success {
+      color: green;
+      display: none;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+      font-size: 14px;
+    }
+    .spinner {
+      width: 16px;
+      height: 16px;
+      margin-left: 10px;
+      border: 2px solid transparent;
+      border-top-color: #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dynamic Content Page</h1>
+    <div id="url">
+      <strong>URL:</strong>
+      <span id="urlDisplay">Loading...</span>
+    </div>
+    <div id="loadingIcon" class="spinner"></div>
+    <div class="error" id="errorText">An error occurred.</div>
+    <div class="success" id="successText">Page saved successfully!</div>
+    <div id="content"></div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
