@@ -61,6 +61,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const data = await new Promise((resolve, reject) => {
         browserImpl.getFromStorage(["url", "body", "apiUrl"], (data) => {
           if(!data.apiUrl){
+            // might require to change the default url in prod
             data.apiUrl = "http://localhost:8080";
           }
           if (!data.url || !data.body) {
