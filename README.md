@@ -1,17 +1,33 @@
-# Extension Firefox
+# Load and Test an Extension for Firefox, Chrome, and Edge  
 
-Ce document explique comment charger et tester une extension Firefox.
+This document explains how to load and test an extension on **Mozilla Firefox**, **Google Chrome**, and **Microsoft Edge**.  
 
-## Étapes pour charger l'extension
+## Loading the Extension  
 
-1. **Ouvrir Firefox**.
-2. Accéder à l'URL suivante : `about:debugging#/runtime/this-firefox`.
-3. Cliquer sur le bouton **"Charger un module supplémentaire"**.
-4. Naviguer jusqu'au dossier contenant les fichiers de l'extension.
-5. Sélectionner le fichier `manifest.json`.
+### **Mozilla Firefox**  
+1. **Open Firefox**.  
+2. Go to the following URL: `about:debugging#/runtime/this-firefox`.  
+3. Click on **"Load Temporary Add-on"**.  
+4. Navigate to the folder containing the extension files.  
+5. Select the `manifest.json` file.  
 
+### **Google Chrome & Microsoft Edge**  
+1. **Open Chrome**.  
+2. Go to the following URL: `chrome://extensions/` or `edge://extensions/`.  
+3. Enable **Developer mode**.  
+4. Click on **"Load unpacked"**.  
+5. Navigate to the folder containing the extension files.  
+6. Select the folder containing `manifest.json`.  
 
-## Visualiser les logs de l'extension
+---
 
-1. **Aller dans `about:debugging#/runtime/this-firefox`**.
-2. Trouver l'extension et cliquer sur **"Examiner"**.
+## Viewing Extension Logs  
+
+### **Mozilla Firefox**  
+1. **Go to** `about:debugging#/runtime/this-firefox`.  
+2. Find the extension and click **"Inspect"**.  
+
+### **Google Chrome & Microsoft Edge**  
+1. **Open** `chrome://extensions/` or `edge://extensions/`.  
+2. Find the extension and click **"Details"**.  
+3. Click **"Inspect views background"** to open the developer console.  
