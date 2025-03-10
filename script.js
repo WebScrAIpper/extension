@@ -59,7 +59,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   const handleSavePage = async () => {
     try {
       const data = await new Promise((resolve, reject) => {
-        browserImpl.getFromStorage(["url", "body"], (data) => {
+        browserImpl.getFromStorage(["url", "body", "apiUrl"], (data) => {
+          if(!data.apiUrl){
+            data.apiUrl = "http://localhost:8080";
+          }
           if (!data.url || !data.body) {
             reject("URL or body not found in storage.");
           } else {
@@ -68,11 +71,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
       });
 
-      const { url, body } = data;
+      const { url, body, apiUrl } = data;
       urlDisplay.innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
 
       const endpoint = "build";
-      const apiUrl = "http://localhost:8080";
       
       let encodedUrl = encodeURIComponent(window.location.href);
       const response = await fetch(`${apiUrl}/api/${endpoint}?url=${url}&redirect=${encodedUrl}`, {
