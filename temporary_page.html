@@ -52,9 +52,9 @@
       font-size: 14px;
     }
     .spinner {
-      width: 32px;
-      height: 32px;
-      margin-left: 6px;
+      width: 40px;
+      height: 40px;
+      margin-left: 7px;
       border: 4px solid transparent;
       border-top-color: #e53e3e;
       border-radius: 50%;
@@ -62,6 +62,12 @@
     }
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+
+    .spinner-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   </style>
 </head>
@@ -72,7 +78,9 @@
       <strong>Document URL:</strong>
       <span id="urlDisplay">Loading...</span>
     </div>
-    <div id="loadingIcon" class="spinner"></div>
+    <div class="spinner-container">
+      <div id="loadingIcon" class="spinner"></div>
+    </div>
     <div class="error" id="errorText">An error occurred.</div>
     <!-- The succes and content div should not exist in the final version since a rerouting should  -->
     <div class="success" id="successText">Page saved successfully!</div>

@@ -4,7 +4,7 @@ body {
 }
 
 .styled-button {
-  background-color: #e53e3e;
+  background-color: #292fac  ;
   color: white;
   font-weight: bolder;
   padding: 10px 20px;
@@ -17,12 +17,13 @@ body {
 }
 
 .styled-button:hover {
-  background-color: #c53030;
+  background-color: #fecd2a;
 }
 
 .button-container {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .hidden {
@@ -44,4 +45,11 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Adjust the size of the logo to match the button */
+.logo {
+  width: 180px;  /* Adjust this value to match the button size */
+  height: auto;  /* Maintain aspect ratio */
+  margin-right: 10px;  /* Optional: space between logo and button */
 }

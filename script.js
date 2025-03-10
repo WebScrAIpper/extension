@@ -70,14 +70,14 @@ function createContentElement(data) {
   container.appendChild(metaInfo);
 
   // Classifiers - Wrapped in small "classifier" elements
-  const classifierTitle = document.createElement("string");
+  const classifierTitle = document.createElement("strong");
   classifierTitle.textContent = "Classifiers:";
   container.appendChild(classifierTitle);
 
   if (data.classifiers.length) {
     const classifiersContainer = document.createElement("div");
 
-    // margin 
+    // margin for the classifiers
     classifiersContainer.style.marginTop = "10px";
     classifiersContainer.style.marginBottom = "10px";
 
@@ -108,8 +108,9 @@ function createContentElement(data) {
 
     data.image_urls.forEach((imageUrl) => {
       const imageSlot = document.createElement("div");
-      imageSlot.style.width = "100px"; // fixed width for square image slots
-      imageSlot.style.height = "100px"; // fixed height for square image slots
+      // fixed width and height for each slot
+      imageSlot.style.width = "140px";
+      imageSlot.style.height = "140px"; 
       imageSlot.style.marginRight = "10px"; // spacing between slots
       imageSlot.style.overflow = "hidden";
       imageSlot.style.borderRadius = "8px"; // rounded corners for slots
@@ -117,9 +118,9 @@ function createContentElement(data) {
       const image = document.createElement("img");
       image.src = imageUrl;
       image.alt = "Article Image";
-      image.style.width = "100%"; // fill the slot
-      image.style.height = "100%"; // fill the slot
-      image.style.objectFit = "cover"; // maintain aspect ratio within the square
+      image.style.width = "100%";
+      image.style.height = "100%";
+      image.style.objectFit = "cover"; // maintain aspect ratio
 
       imageSlot.appendChild(image);
       imagesContainer.appendChild(imageSlot);
