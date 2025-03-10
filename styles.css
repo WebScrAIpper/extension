@@ -3,39 +3,27 @@ body {
   margin: 10px;
 }
 
-button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
+.styled-button {
+  background-color: #e53e3e;
+  color: white;
+  font-weight: bolder;
   padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   cursor: pointer;
-  border-radius: 4px;
-  position: relative;
+  transition: background-color 0.3s ease;
 }
 
-button:hover {
-  background-color: #0056b3;
+.styled-button:hover {
+  background-color: #c53030;
 }
 
 .button-container {
   display: flex;
   align-items: center;
 }
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  margin-left: 10px;
-  border: 2px solid transparent;
-  border-top-color: #007bff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-.hidden {
-  display: none;
-}
-
 
 .hidden {
   display: none;

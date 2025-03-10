@@ -25,37 +25,14 @@ function createElement(id, className, textContent = "") {
   return element;
 }
 
-function createStyle() {
-  const spinnerStyle = document.createElement("style");
-  spinnerStyle.innerHTML = `
-      .spinner {
-        width: 16px;
-        height: 16px;
-        margin-left: 10px;
-        border: 2px solid transparent;
-        border-top-color: #007bff;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-      .error {
-        color: red;
-        display: none;
-      }
-      .success {
-        color: green;
-        display: none;
-      }
-      pre {
-        background: #f4f4f4;
-        padding: 10px;
-        border-radius: 5px;
-        overflow-x: auto;
-      }
-    `;
-  document.head.appendChild(spinnerStyle);
+function animateTitle() {
+  const title = document.querySelector("h1");
+  let dots = 0;
+  const interval = setInterval(() => {
+    dots = (dots + 1) % 4;
+    title.innerHTML = `Your document <a href="${url}">(link)</a> is being summarized${".".repeat(dots)}`;
+  }, 500);
+  return interval;
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -67,8 +44,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   );
   const loadingIcon = createElement("loadingIcon", "spinner");
   const urlDisplay = document.getElementById("urlDisplay");
+  const title = document.querySelector("h1");
+
+  const titleAnimation = animateTitle();
 
   const displayError = (message) => {
+    clearInterval(titleAnimation);
+    title.textContent = "An error occurred!";
     loadingIcon.style.display = "none";
     errorText.textContent = message;
     errorText.style.display = "block";
@@ -76,8 +58,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const handleSavePage = async () => {
     try {
-      createStyle();
-
       const data = await new Promise((resolve, reject) => {
         browserImpl.getFromStorage(["url", "body"], (data) => {
           if (!data.url || !data.body) {
@@ -89,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
 
       const { url, body } = data;
-      urlDisplay.textContent = url;
+      urlDisplay.innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
 
       const endpoint = "build";
       const apiUrl = "http://localhost:8080";
@@ -114,6 +94,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
 
       const responseData = await response.json();
+      clearInterval(titleAnimation);
+      title.textContent = "The summary is done.... About to reroute...";
       successText.textContent = "Page saved successfully!";
       loadingIcon.style.display = "none";
       successText.style.display = "block";
