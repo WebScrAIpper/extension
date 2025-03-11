@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "techSwarmPost",
+  "name": "Web-ScrAIper",
   "version": "1.0",
-  "description": "Cette extension permet d'envoyer le lien d'un article vers TechSwarm",
+  "description": "This extension allows you to quickly summarize and save a webpage.",
   "permissions": ["activeTab", "scripting", "storage", "tabs"],
   "options_page": "options.html",
   "host_permissions": ["<all_urls>"],
