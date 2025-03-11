@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const data = await new Promise((resolve, reject) => {
         browserImpl.getFromStorage(["url", "body", "apiUrl"], (data) => {
           if (!data.apiUrl) {
-            data.apiUrl = "http://localhost:8080"; // Default URL, should be replaced once we have the prod.
+            data.apiUrl = "http://localhost:8080"; //TODO: Default URL, should be replaced once we have the prod.
           }
           if (!data.url || !data.body) {
             reject("URL or body not found in storage.");
