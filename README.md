@@ -30,4 +30,25 @@ This document explains how to load and test an extension on **Mozilla Firefox**,
 ### **Google Chrome & Microsoft Edge**  
 1. **Open** `chrome://extensions/` or `edge://extensions/`.  
 2. Find the extension and click **"Details"**.  
-3. Click **"Inspect views background"** to open the developer console.  
+3. Click **"Inspect views background"** to open the developer console.
+
+---
+
+## Publishing the extension
+
+### Mozilla Firefox (Firefox Add-ons Store)
+1. **Go to the Firefox Add-ons website**: [https://addons.mozilla.org/](https://addons.mozilla.org/).
+2. **Sign in to your Mozilla account** (or create one if you don’t have it).
+3. **Click on "Submit a New Add-on"**.
+6. **Once submitted**, the extension will be reviewed by Mozilla, which may take a few days.
+7. **Once approved**, the extension will be published and available for Firefox users.
+
+### Google Chrome (Chrome Web Store)
+1. **Go to the Chrome Web Store Developer Dashboard**: [https://chrome.google.com/webstore/developer/dashboard](https://chrome.google.com/webstore/developer/dashboard).
+2. **Sign in with your Google account**.
+3. **Click on "Add a new item"**.
+6. **Once you've published it**, Google will review the extension, which may take a few days.
+7. **Once approved**, the extension will be published and available for Chrome users.
+
+---
+
