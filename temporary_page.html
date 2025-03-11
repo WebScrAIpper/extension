@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Content Page</title>
+  <title>Web ScrAIper</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,8 +20,8 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     h1 {
-      text-align: center;
       color: #333;
+      font-weight: bolder;
     }
     #url {
       font-size: 18px;
@@ -52,28 +52,37 @@
       font-size: 14px;
     }
     .spinner {
-      width: 16px;
-      height: 16px;
-      margin-left: 10px;
-      border: 2px solid transparent;
-      border-top-color: #007bff;
+      width: 40px;
+      height: 40px;
+      margin-left: 7px;
+      border: 4px solid transparent;
+      border-top-color: #e53e3e;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
     }
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+
+    .spinner-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Dynamic Content Page</h1>
+    <h1>Your document is being summarized...</h1>
     <div id="url">
-      <strong>URL:</strong>
+      <strong>Document URL:</strong>
       <span id="urlDisplay">Loading...</span>
     </div>
-    <div id="loadingIcon" class="spinner"></div>
+    <div class="spinner-container">
+      <div id="loadingIcon" class="spinner"></div>
+    </div>
     <div class="error" id="errorText">An error occurred.</div>
+    <!-- The succes and content div should not exist in the final version since a rerouting should  -->
     <div class="success" id="successText">Page saved successfully!</div>
     <div id="content"></div>
   </div>
